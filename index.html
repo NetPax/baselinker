@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="pl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>BaseLinker - Zadanie rekrutacyjne - Wojcieh Stawarz</title>
+	<style>
+		:root {
+			--white: #ffffff;
+			--black: #000000;
+			--blue: #5983fc;
+			--red: #ff0000;
+
+			--gray-dark: #333333;
+			--gray-bg: #f0f0f0;
+			--gray-border: #dddddd;
+
+			--brand: var(--blue);
+			--text: var(--gray-dark);
+			--bg: var(--gray-dark);
+			--shadow: var(--black);
+			--alert: var(--red);
+
+			--radius: 4px;
+			--padding: 4px;
+		}
+
+		*, *::before, *::after {
+			margin: 0;
+			padding: 0;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+
+		html {
+			font-size: 62.5%;
+		}
+
+		body {
+			background-color: var(--white);
+			color: var(--text);
+			font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-size: 1.6rem;
+			font-weight: 400;
+			line-height: 1.5;
+		}
+
+		.app {
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			-ms-flex-pack: center;
+			justify-content: center;
+			min-height: 100vh;
+			width: 100%;
+			position: relative;
+		}
+
+		.btn {
+			background-color: var(--brand);
+			border: none;
+			border-radius: var(--radius);
+			color: var(--white);
+			cursor: pointer;
+			padding: calc(var(--padding) * 4);
+			width: -webkit-fit-content;
+			width: -moz-fit-content;
+			width: fit-content;
+		}
+
+		.dialog {
+			background: var(--bg);
+			display: none;
+			-webkit-box-align: center;
+			-ms-flex-align: center;
+			align-items: center;
+			-webkit-box-pack: center;
+			-ms-flex-pack: center;
+			justify-content: center;
+			padding: calc(var(--padding) * 4);
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 10;
+		}
+
+		.dialog-container {
+			-webkit-box-shadow: 0 4px 50px 0 var(--shadow);
+			box-shadow: 0 4px 50px 0 var(--shadow);
+			background-color: var(--white);
+			border-radius: calc(var(--radius) * 4);
+			padding: calc(var(--padding) * 8);
+			width: 100%;
+			max-width: 640px;
+			min-height: 420px;
+		}
+
+		.form {
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-box-direction: normal;
+			-ms-flex-direction: column;
+			flex-direction: column;
+			gap: 16px;
+		}
+
+		.form-field {
+			position: relative;
+		}
+
+		.form-field .form-label {
+			cursor: pointer;
+		}
+
+		.form-field .error {
+			color: var(--alert);
+			display: none;
+			font-size: 1.2rem;
+		}
+
+		.form-field-text .form-label {
+			background-color: var(--gray-bg);
+			border-radius: calc(var(--radius) / 2);
+			font-size: 1.2rem;
+			padding: 0 calc(var(--padding) * 2);
+			position: absolute;
+			top: 18px;
+			left: 16px;
+			-webkit-transition: top .25s ease;
+			-o-transition: top .25s ease;
+			transition: top .25s ease;
+		}
+
+		.form-input-text {
+			background-color: var(--gray-bg);
+			border: 1px solid transparent;
+			border-radius: var(--radius);
+			font-family: inherit;
+			font-size: inherit;
+			outline: none;
+			padding: calc(var(--padding) * 4);
+			-webkit-transition: border-color .25s ease-in;
+			-o-transition: border-color .25s ease-in;
+			transition: border-color .25s ease-in;
+			width: 100%;
+		}
+
+		.form-input-text:focus {
+			border: 1px solid var(--brand);
+		}
+
+		.form-input-text:focus + label,
+		.form-input-text:valid + label {
+			top: -9px;
+		}
+
+		.form-field-consent {
+			padding-left: 48px;
+		}
+
+		.form-field-consent .form-input-checkbox {
+			position: absolute;
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.form-field-consent .form-input-checkbox:focus ~ .form-label::before {
+			border: 1px solid var(--brand);
+		}
+
+		.form-field-consent .form-input-checkbox:checked ~ .form-label::after {
+			opacity: 1;
+		}
+
+		.form-field-consent .form-label {
+			position: relative;
+		}
+
+		.form-field-consent .form-label::before {
+			border: 1px solid var(--gray-border);
+			border-radius: var(--radius);
+			content: '';
+			position: absolute;
+			top: 0;
+			left: -48px;
+			width: 32px;
+			height: 32px;
+			z-index: 10;
+		}
+
+		.form-field-consent .form-label::after {
+			border-left: 4px solid var(--brand);
+			border-bottom: 4px solid var(--brand);
+			content: '';
+			position: absolute;
+			top: 10px;
+			left: -40px;
+			width: 16px;
+			height: 8px;
+			-webkit-transform: rotate(-45deg);
+			-ms-transform: rotate(-45deg);
+			transform: rotate(-45deg);
+			-webkit-transition: opacity .25s ease;
+			-o-transition: opacity .25s ease;
+			transition: opacity .25s ease;
+			opacity: 0;
+		}
+
+		.form-field-consent .form-label {
+			display: block;
+			font-size: 1.2rem;
+			line-height: 1.25;
+		}
+	</style>
+</head>
+<body>
+	<main class="app">
+		<button class="btn js-show-dialog">Wypełnij formularz</button>
+		<div class="dialog js-dialog" role="dialog">
+			<div class="dialog-container">
+				<form action="post.php" method="POST" id="f0" class="form js-form" novalidate>
+
+					<div class="form-field form-field-text">
+						<input type="text" id="f0-name" name="name" class="form-input-text" required>
+						<label for="f0-name" class="form-label">Imię</label>
+						<div class="error">Niepoprawne dane. Imię musi składac się z min. 3 i maks. 70 znaków.</div>
+					</div>
+
+					<div class="form-field form-field-text">
+						<input type="text" id="f0-email" name="email" class="form-input-text" required>
+						<label for="f0-email" class="form-label">E-mail</label>
+						<div class="error">Niepoprawne dane. Wpisz poprawny e-mail</div>
+					</div>
+
+					<div class="form-field form-field-consent">
+						<input type="checkbox" id="f0-consent" name="consent" class="form-input-checkbox" required>
+						<label for="f0-consent" class="form-label">
+							Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut consectetur, cum dolor doloremque, hic illo minima natus obcaecati perspiciatis quam quia quis quo repellendus reprehenderit soluta. Aliquid consequatur delectus doloribus ex exercitationem facilis, fugit inventore laboriosam magni nesciunt? Alias ducimus eligendi maiores voluptatum? Accusantium aliquam autem dicta esse labore quas rem. Accusamus aliquid aperiam beatae consectetur dicta dolorem eaque est laudantium necessitatibus, nemo nihil perferendis porro quod repellendus sint veniam.
+						</label>
+						<div class="error">Zgoda wymagana.</div>
+					</div>
+
+					<input type="submit" class="btn" value="Wyslij">
+
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+	<script>
+		(function () {
+			'use strict';
+			$(document).ready(function () {
+
+				function validateEmail(email) {
+					const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+					return re.test(String(email).toLowerCase());
+				}
+
+				const $showDialog = $('.js-show-dialog');
+				const $dialog = $('.js-dialog');
+				const $form = $('.js-form');
+
+				$showDialog.on('click', function () {
+					$dialog.fadeIn({
+						start: function () {
+							$(this).css({
+								display: "flex"
+							})
+						}
+					});
+				});
+
+				$dialog.on('click', function (e) {
+					if (e.target === $dialog[0]) {
+						$dialog.find('form')[0].reset();
+						$dialog.fadeOut();
+					}
+				});
+
+				$form.on('submit', function(e) {
+					$(this).find('.error').hide();
+					let isValid = true;
+
+					const nameField = $(this).find('input[name=name]');
+					const emailField = $(this).find('input[name=email]');
+					const consentField = $(this).find('input[name=consent]');
+
+					if ((nameField.val().length < 3) || (nameField.val().length > 70)) {
+						nameField.siblings('.error').show();
+						isValid = false;
+					}
+
+					if (validateEmail(emailField.val()) === false) {
+						emailField.siblings('.error').show();
+						isValid = false;
+					}
+
+					if (!consentField.is(':checked')) {
+						consentField.siblings('.error').show();
+						isValid = false;
+					}
+
+					if (!isValid) {
+						e.preventDefault();
+					}
+
+				});
+
+			});
+		}(jQuery));
+	</script>
+</body>
+</html>
