@@ -1,2 +1,1 @@
-Wojciech Stawarz
-Zadanie rekrutacyjne - BaseLinker
+Wojciech Stawarz - zadanie rekrutacyjne - BaseLinker
